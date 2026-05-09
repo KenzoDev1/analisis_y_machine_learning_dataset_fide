@@ -1,0 +1,73 @@
+# Uso (desde la raíz del repo):
+#   docker compose build
+#   docker compose run --rm pipeline          # bootstrap + kedro run
+#   docker compose run --rm test              # bootstrap + pytest
+#   docker compose --profile lab up jupyter   # Jupyter en http://localhost:8888
+#   docker compose --profile viz up kedro-viz # Kedro Viz en http://localhost:4141
+#
+# El volumen `football_data` guarda data/raw y salidas de Kedro entre ejecuciones.
+# El volumen `football_test_data` se usa solo para pruebas y puede regenerarse.
+# Para usar solo SQLite sintética sin red: docker compose run --rm pipeline-minimal
+
+services:
+  pipeline:
+    build: .
+    volumes:
+      - football_data:/app/data
+    command: ["sh", "-c", "python scripts/bootstrap_data.py && kedro run"]
+
+  pipeline-minimal:
+    build: .
+    volumes:
+      - football_data:/app/data
+    command: ["sh", "-c", "python scripts/bootstrap_data.py --source minimal && kedro run"]
+
+  test:
+    build: .
+    volumes:
+      - football_test_data:/app/data
+    command:
+      [
+        "sh",
+        "-c",
+        "python scripts/bootstrap_data.py --source minimal --force && pytest -q",
+      ]
+
+  jupyter:
+    profiles: ["lab"]
+    build: .
+    working_dir: /app
+    ports:
+      - "8888:8888"
+    volumes:
+      - football_data:/app/data
+      - ./notebooks:/app/notebooks
+    environment:
+      KEDRO_DISABLE_TELEMETRY: "1"
+    command:
+      [
+        "sh",
+        "-c",
+        "python scripts/bootstrap_data.py --source minimal && kedro jupyter lab -- --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.root_dir=/app",
+      ]
+
+  kedro-viz:
+    profiles: ["viz"]
+    build: .
+    working_dir: /app
+    ports:
+      - "4141:4141"
+    volumes:
+      - football_data:/app/data
+    environment:
+      KEDRO_DISABLE_TELEMETRY: "1"
+    command:
+      [
+        "sh",
+        "-c",
+        "python scripts/bootstrap_data.py --source minimal && kedro viz --host 0.0.0.0 --port 4141",
+      ]
+
+volumes:
+  football_data:
+  football_test_data:

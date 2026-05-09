@@ -1,0 +1,21 @@
+# Parámetros Kedro: Proyecto FIDE Chess — SCY1101
+
+# ==========================================
+# Split Train/Test
+# ==========================================
+split:
+  test_size: 0.2
+  random_state: 42
+
+# ==========================================
+# Configuración de modelos (referencia)
+# ==========================================
+model_options:
+  target: is_expert
+  features:
+    - rating_std_avg
+    - rating_change
+    - total_months_active
+    - age_approx
+    - gender_encoded
+    - title_encoded

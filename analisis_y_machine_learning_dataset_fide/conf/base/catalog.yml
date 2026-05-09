@@ -1,0 +1,139 @@
+# =====================================================================
+# Catálogo Kedro — Proyecto FIDE Chess (Evaluación 1 y 2)
+# =====================================================================
+# Columnas reales:
+#   players.csv   → fide_id, name, federation, gender, title, yob
+#   ratings_*.csv → fide_id, year, month, rating_standard, rating_rapid, rating_blitz
+# =====================================================================
+
+# ==========================================
+# 01_RAW — Archivos CSV originales
+# ==========================================
+fide_players:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/players.csv
+
+fide_ratings_2019:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/ratings_2019.csv
+
+fide_ratings_2020:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/ratings_2020.csv
+
+fide_ratings_2021:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/ratings_2021.csv
+
+# ==========================================
+# 02_INTERMEDIATE — Después de ingesta y limpieza
+# ==========================================
+# -- Salidas de data_ingestion (columnas estandarizadas) --
+fide_players_raw:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/players_ingested.parquet
+
+fide_ratings_2019_raw:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/ratings_2019_ingested.parquet
+
+fide_ratings_2020_raw:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/ratings_2020_ingested.parquet
+
+fide_ratings_2021_raw:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/ratings_2021_ingested.parquet
+
+# -- Salidas de data_cleaning (sin nulos, sin duplicados, sin outliers) --
+fide_players_clean:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/players_clean.parquet
+
+fide_ratings_2019_clean:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/ratings_2019_clean.parquet
+
+fide_ratings_2020_clean:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/ratings_2020_clean.parquet
+
+fide_ratings_2021_clean:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/ratings_2021_clean.parquet
+
+# -- Reporte de diagnóstico inicial --
+ingestion_report:
+  type: json.JSONDataset
+  filepath: data/08_reporting/ingestion_diagnostic_report.json
+
+# ==========================================
+# 03_PRIMARY — Dataset integrado tras transformación
+# ==========================================
+fide_preprocessed_data:
+  type: pandas.ParquetDataset
+  filepath: data/03_primary/preprocessed_data.parquet
+
+# ==========================================
+# 04_FEATURE — Features listas para ML
+# ==========================================
+fide_features:
+  type: pandas.ParquetDataset
+  filepath: data/04_feature/model_features.parquet
+
+# ==========================================
+# 05_MODEL_INPUT — Train/Test split
+# ==========================================
+X_train:
+  type: pickle.PickleDataset
+  filepath: data/05_model_input/X_train.pkl
+
+X_test:
+  type: pickle.PickleDataset
+  filepath: data/05_model_input/X_test.pkl
+
+y_train:
+  type: pickle.PickleDataset
+  filepath: data/05_model_input/y_train.pkl
+
+y_test:
+  type: pickle.PickleDataset
+  filepath: data/05_model_input/y_test.pkl
+
+# ==========================================
+# 06_MODELS — Modelos entrenados
+# ==========================================
+unsupervised_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/clustering_model.pkl
+
+supervised_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/best_supervised_model.pkl
+
+optimized_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/optimized_model.pkl
+
+# ==========================================
+# 08_REPORTING — Reportes y métricas
+# ==========================================
+validation_report:
+  type: json.JSONDataset
+  filepath: data/08_reporting/validation_report.json
+
+clustering_metrics:
+  type: json.JSONDataset
+  filepath: data/08_reporting/clustering_metrics.json
+
+classification_metrics:
+  type: json.JSONDataset
+  filepath: data/08_reporting/classification_metrics.json
+
+evaluation_report:
+  type: json.JSONDataset
+  filepath: data/08_reporting/evaluation_report.json
+
+optimization_report:
+  type: json.JSONDataset
+  filepath: data/08_reporting/optimization_report.json
