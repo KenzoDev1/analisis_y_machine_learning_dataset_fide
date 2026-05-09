@@ -20,8 +20,20 @@ def merge_and_transform(
     ratings_2019: pd.DataFrame,
     ratings_2020: pd.DataFrame,
     ratings_2021: pd.DataFrame,
+    expert_threshold: int,
+    base_year: int,
 ) -> pd.DataFrame:
     """Integra las 4 tablas y genera features derivadas para ML.
+
+    Args:
+        players: DataFrame limpio de jugadores.
+        ratings_2019: DataFrame limpio de ratings 2019.
+        ratings_2020: DataFrame limpio de ratings 2020.
+        ratings_2021: DataFrame limpio de ratings 2021.
+        expert_threshold: ELO mínimo para clasificar como "experto"
+                          (parámetro inyectado desde parameters.yml).
+        base_year: Año de referencia para calcular la edad aproximada
+                   (parámetro inyectado desde parameters.yml).
 
     Pasos:
     1. Agregar ratings por jugador-año (groupby + media anual)
@@ -98,13 +110,15 @@ def merge_and_transform(
     if rating_cols_present:
         df["rating_std_avg"] = df[rating_cols_present].mean(axis=1)
 
-    # Variable objetivo para clasificación: ¿es experto? (ELO > 2000)
+    # Variable objetivo para clasificación: ¿es experto? (ELO > expert_threshold)
     if "rating_std_avg" in df.columns:
-        df["is_expert"] = (df["rating_std_avg"] > 2000).astype(int)
+        df["is_expert"] = (df["rating_std_avg"] > expert_threshold).astype(int)
+        logger.info(f"  Umbral experto (expert_threshold): {expert_threshold}")
 
-    # Edad aproximada (respecto a 2021)
+    # Edad aproximada (respecto a base_year, parametrizado)
     if "yob" in df.columns:
-        df["age_approx"] = 2021 - df["yob"]
+        df["age_approx"] = base_year - df["yob"]
+        logger.info(f"  Año base para edad (base_year): {base_year}")
 
     # ---------------------------------------------------------------
     # 6. Codificación de categóricas (AD 1.3)

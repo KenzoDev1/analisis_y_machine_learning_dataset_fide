@@ -1,6 +1,21 @@
 # Parámetros Kedro: Proyecto FIDE Chess — SCY1101
 
 # ==========================================
+# Limpieza de datos (Indicador 4)
+# ==========================================
+cleaning:
+  iqr_factor: 1.5          # Factor multiplicador para detección de outliers IQR
+  min_yob: 1900            # Año de nacimiento mínimo aceptable
+  max_yob: 2015            # Año de nacimiento máximo aceptable
+
+# ==========================================
+# Transformación de datos (Indicador 5)
+# ==========================================
+transform:
+  expert_threshold: 2000   # ELO mínimo para clasificar como "experto"
+  base_year: 2021          # Año de referencia para calcular edad aproximada
+
+# ==========================================
 # Split Train/Test
 # ==========================================
 split:
