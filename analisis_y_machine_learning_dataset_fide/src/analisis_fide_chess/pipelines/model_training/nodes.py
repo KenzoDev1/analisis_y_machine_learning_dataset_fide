@@ -2,11 +2,17 @@
 
 Implementa split train/test y entrenamiento de múltiples modelos
 de clasificación usando scikit-learn.
+
+Cada modelo está envuelto en un sklearn.pipeline.Pipeline que incluye
+un paso de escalado (StandardScaler) seguido del clasificador,
+cumpliendo con el requerimiento IEE 2.1.1 de la rúbrica.
 """
 import pandas as pd
 import numpy as np
 import logging
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
@@ -67,7 +73,15 @@ def train_models(
     X_train: pd.DataFrame,
     y_train: pd.Series,
 ) -> dict:
-    """Entrena múltiples modelos supervisados y retorna el mejor.
+    """Entrena múltiples modelos supervisados envueltos en Pipelines.
+
+    Cada modelo se construye como un sklearn.pipeline.Pipeline con:
+      1. StandardScaler  — normalización de features (media=0, std=1)
+      2. Clasificador     — el algoritmo de ML correspondiente
+
+    Esto cumple con el requerimiento IEE 2.1.1 ("modelos con pipelines")
+    y garantiza que el escalado se aplique de forma consistente durante
+    el entrenamiento y la inferencia.
 
     Modelos:
     - Logistic Regression
@@ -76,18 +90,39 @@ def train_models(
     - Support Vector Machine
     - Gradient Boosting
     """
+    # Cada valor es un Pipeline(scaler → clasificador)
+    # El paso del clasificador se llama "classifier" para que los
+    # hiperparámetros se referencien como "classifier__<param>"
+    # en la etapa de optimización (hyperparameter_tuning).
     models = {
-        "LogisticRegression": LogisticRegression(
-            max_iter=1000, random_state=RANDOM_STATE
-        ),
-        "RandomForest": RandomForestClassifier(
-            n_estimators=100, random_state=RANDOM_STATE
-        ),
-        "KNN": KNeighborsClassifier(n_neighbors=5),
-        "SVM": SVC(kernel="rbf", random_state=RANDOM_STATE, probability=True),
-        "GradientBoosting": GradientBoostingClassifier(
-            n_estimators=100, random_state=RANDOM_STATE
-        ),
+        "LogisticRegression": Pipeline([
+            ("scaler", StandardScaler()),
+            ("classifier", LogisticRegression(
+                max_iter=1000, random_state=RANDOM_STATE
+            )),
+        ]),
+        "RandomForest": Pipeline([
+            ("scaler", StandardScaler()),
+            ("classifier", RandomForestClassifier(
+                n_estimators=100, random_state=RANDOM_STATE
+            )),
+        ]),
+        "KNN": Pipeline([
+            ("scaler", StandardScaler()),
+            ("classifier", KNeighborsClassifier(n_neighbors=5)),
+        ]),
+        "SVM": Pipeline([
+            ("scaler", StandardScaler()),
+            ("classifier", SVC(
+                kernel="rbf", random_state=RANDOM_STATE, probability=True
+            )),
+        ]),
+        "GradientBoosting": Pipeline([
+            ("scaler", StandardScaler()),
+            ("classifier", GradientBoostingClassifier(
+                n_estimators=100, random_state=RANDOM_STATE
+            )),
+        ]),
     }
 
     best_model = None
