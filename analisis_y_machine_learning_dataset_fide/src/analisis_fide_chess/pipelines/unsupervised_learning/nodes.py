@@ -26,6 +26,7 @@ CLUSTER_FEATURES = [
 
 def run_unsupervised(
     df: pd.DataFrame,
+    clustering_params: dict,
 ) -> tuple:
     """Ejecuta análisis no supervisado completo.
 
@@ -48,6 +49,9 @@ def run_unsupervised(
     logger.info(f"Features para clustering: {available}")
     logger.info(f"Registros: {len(X)}")
 
+    sample_size = clustering_params.get("silhouette_sample_size", 10000)
+    logger.info(f"Silhouette Sample Size: {sample_size}")
+
     # Escalar
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
@@ -61,7 +65,9 @@ def run_unsupervised(
         km = KMeans(n_clusters=k, random_state=RANDOM_STATE, n_init=10)
         labels = km.fit_predict(X_scaled)
         inertias.append(float(km.inertia_))
-        sil = silhouette_score(X_scaled, labels)
+        sil = silhouette_score(
+            X_scaled, labels, sample_size=sample_size, random_state=RANDOM_STATE
+        )
         silhouettes.append(round(float(sil), 4))
         logger.info(f"  K={k} — Inertia: {km.inertia_:.2f}, Silhouette: {sil:.4f}")
 
@@ -85,7 +91,9 @@ def run_unsupervised(
     )
 
     # ----- 5. Métricas finales -----
-    final_silhouette = silhouette_score(X_scaled, final_labels)
+    final_silhouette = silhouette_score(
+        X_scaled, final_labels, sample_size=sample_size, random_state=RANDOM_STATE
+    )
     final_calinski = calinski_harabasz_score(X_scaled, final_labels)
     final_davies = davies_bouldin_score(X_scaled, final_labels)
 

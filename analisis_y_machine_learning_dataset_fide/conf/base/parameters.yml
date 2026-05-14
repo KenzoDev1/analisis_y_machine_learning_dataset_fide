@@ -67,3 +67,9 @@ tuning:
 # ==========================================
 evaluation:
   cv: 3
+
+# ==========================================
+# Aprendizaje no supervisado (Optimización 4)
+# ==========================================
+clustering:
+  silhouette_sample_size: 10000
