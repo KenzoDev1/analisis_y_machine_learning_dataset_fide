@@ -1,8 +1,8 @@
-.. analisis_equipos_de_football documentation master file, created by sphinx-quickstart.
+.. analisis_fide_chess documentation master file, created by sphinx-quickstart.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to project analisis_equipos_de_football's API docs!
+Welcome to project analisis_fide_chess's API docs!
 =============================================
 
 .. toctree::

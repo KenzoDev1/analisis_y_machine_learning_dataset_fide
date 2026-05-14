@@ -28,8 +28,8 @@
 
 **Files:**
 - Modify: `scripts/bootstrap_data.py`
-- Modify: `src/analisis_equipos_de_football/pipelines/data_processing/nodes.py`
-- Modify: `src/analisis_equipos_de_football/pipelines/ml_classification/nodes.py`
+- Modify: `src/analisis_fide_chess/pipelines/data_processing/nodes.py`
+- Modify: `src/analisis_fide_chess/pipelines/ml_classification/nodes.py`
 - Create: `tests/test_data_and_model_robustness.py`
 
 - [x] Add SQLite integrity/schema validation before reusing an existing DB.

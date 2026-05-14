@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-# analisis_equipos_de_football documentation build
+# analisis_fide_chess documentation build
 # configuration file, created by sphinx-quickstart.
 #
 # This file is execfile()d with the current directory set to its
@@ -19,11 +19,11 @@
 #
 import re
 
-from analisis_equipos_de_football import __version__ as release
+from analisis_fide_chess import __version__ as release
 
 # -- Project information -----------------------------------------------------
 
-project = "analisis_equipos_de_football"
+project = "analisis_fide_chess"
 author = "Kedro"
 
 # The short X.Y version.
@@ -117,7 +117,7 @@ html_show_sourcelink = False
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "analisis_equipos_de_footballdoc"
+htmlhelp_basename = "analisis_fide_chessdoc"
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -145,8 +145,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "analisis_equipos_de_football.tex",
-        "analisis_equipos_de_football Documentation",
+        "analisis_fide_chess.tex",
+        "analisis_fide_chess Documentation",
         "Kedro",
         "manual",
     )
@@ -159,8 +159,8 @@ latex_documents = [
 man_pages = [
     (
         master_doc,
-        "analisis_equipos_de_football",
-        "analisis_equipos_de_football Documentation",
+        "analisis_fide_chess",
+        "analisis_fide_chess Documentation",
         [author],
         1,
     )
@@ -174,11 +174,11 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "analisis_equipos_de_football",
-        "analisis_equipos_de_football Documentation",
+        "analisis_fide_chess",
+        "analisis_fide_chess Documentation",
         author,
-        "analisis_equipos_de_football",
-        "Project analisis_equipos_de_football codebase.",
+        "analisis_fide_chess",
+        "Project analisis_fide_chess codebase.",
         "Data-Science",
     )
 ]

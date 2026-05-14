@@ -4,13 +4,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from analisis_equipos_de_football.pipelines.data_processing.nodes import (
+from analisis_fide_chess.pipelines.data_processing.nodes import (
     build_ml_features_table,
 )
-from analisis_equipos_de_football.pipelines.ml_classification.nodes import (
+from analisis_fide_chess.pipelines.ml_classification.nodes import (
     train_classification_bundle,
 )
-from analisis_equipos_de_football.pipelines.ml_regression.nodes import (
+from analisis_fide_chess.pipelines.ml_regression.nodes import (
     train_regression_bundle,
 )
 from scripts.bootstrap_data import create_minimal_database, has_expected_sqlite_schema

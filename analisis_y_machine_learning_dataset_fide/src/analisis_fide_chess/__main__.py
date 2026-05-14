@@ -1,5 +1,5 @@
-"""analisis_equipos_de_football file for ensuring the package is executable
-as `analisis-equipos-de-football` and `python -m analisis_equipos_de_football`
+"""analisis_fide_chess file for ensuring the package is executable
+as `analisis-fide-chess` and `python -m analisis_fide_chess`
 """
 
 import sys

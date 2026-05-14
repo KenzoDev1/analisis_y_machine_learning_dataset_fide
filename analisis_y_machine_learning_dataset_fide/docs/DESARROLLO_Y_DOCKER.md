@@ -123,7 +123,7 @@ Luego abre `http://localhost:4141`.
 Los servicios `pipeline-minimal`, `jupyter` y `kedro-viz` no usan `--force`, por lo que no reemplazan una base existente válida. Si necesitas resetear la demo, elimina explícitamente el volumen:
 
 ```bash
-docker volume rm analisis-equipos-de-football_football_data
+docker volume rm analisis-fide-chess_football_data
 ```
 
 ---

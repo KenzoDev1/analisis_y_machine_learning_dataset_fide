@@ -9,7 +9,7 @@ from pathlib import Path
 from kedro.framework.session import KedroSession
 from kedro.framework.startup import bootstrap_project
 
-from analisis_equipos_de_football.pipeline_registry import register_pipelines
+from analisis_fide_chess.pipeline_registry import register_pipelines
 
 # Tamaño mínimo para considerar que ya hay una base usable (no un stub vacío).
 _MIN_SQLITE_BYTES = 1_000

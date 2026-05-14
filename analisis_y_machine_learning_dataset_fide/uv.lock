@@ -32,7 +32,7 @@ wheels = [
 ]
 
 [[package]]
-name = "analisis-equipos-de-football"
+name = "analisis-fide-chess"
 source = { editable = "." }
 dependencies = [
     { name = "ipykernel" },

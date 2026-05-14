@@ -25,7 +25,7 @@ def register_pipelines() -> dict[str, Pipeline]:
     Returns:
         Diccionario nombre → ``Pipeline``.
     """
-    pipelines = find_pipelines(raise_errors=False)
+    pipelines = find_pipelines(raise_errors=True)
     modular = {k: v for k, v in pipelines.items() if k != "__default__"}
     ordered = [modular[name] for name in _DEFAULT_PIPELINE_ORDER if name in modular]
     if ordered:

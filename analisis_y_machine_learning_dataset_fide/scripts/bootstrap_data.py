@@ -74,7 +74,7 @@ def download_file(url: str, dest: Path, timeout: int = 600) -> None:
     tmp = dest.with_suffix(dest.suffix + ".partial")
     req = urllib.request.Request(
         url,
-        headers={"User-Agent": "analisis-equipos-de-football-bootstrap/1.0"},
+        headers={"User-Agent": "analisis-fide-chess-bootstrap/1.0"},
     )
     last_err: Exception | None = None
     for attempt in range(3):

@@ -231,7 +231,7 @@ Catálogo de datasets: `conf/base/catalog.yml`.
 |---------|------------|
 | `no such table` o error al cargar `match` | Ejecuta `python scripts/bootstrap_data.py` |
 | `kedro: command not found` | Activa el `.venv` y `pip install -r requirements.txt` |
-| `No module named 'analisis_equipos_de_football'` | Desde la raíz: `pip install -e .` |
+| `No module named 'analisis_fide_chess'` | Desde la raíz: `pip install -e .` |
 | Jupyter no ve el `catalog` | Abre Jupyter con `kedro jupyter lab` desde la **raíz** del repo |
 | Quiero ver el flujo visual de Kedro | Ejecuta `kedro viz` o `docker compose --profile viz up kedro-viz` |
 | Notebooks 01–02 bien pero tablas de jugadores vacías | Normal con la base **sintética**; para datos reales usa descarga completa |
