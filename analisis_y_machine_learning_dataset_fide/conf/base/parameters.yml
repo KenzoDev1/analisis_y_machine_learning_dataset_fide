@@ -73,3 +73,4 @@ evaluation:
 # ==========================================
 clustering:
   silhouette_sample_size: 10000
+  training_sample_size: 50000

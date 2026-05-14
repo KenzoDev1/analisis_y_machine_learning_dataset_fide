@@ -46,8 +46,14 @@ def run_unsupervised(
     # ----- 1. Preparar features -----
     available = [c for c in CLUSTER_FEATURES if c in df.columns]
     X = df[available].dropna()
+
+    training_sample_size = clustering_params.get("training_sample_size", 50000)
+    if len(X) > training_sample_size:
+        logger.info(f"Subsampling training dataset a {training_sample_size} registros")
+        X = X.sample(n=training_sample_size, random_state=RANDOM_STATE)
+
     logger.info(f"Features para clustering: {available}")
-    logger.info(f"Registros: {len(X)}")
+    logger.info(f"Registros (X final): {len(X)}")
 
     sample_size = clustering_params.get("silhouette_sample_size", 10000)
     logger.info(f"Silhouette Sample Size: {sample_size}")
@@ -62,7 +68,7 @@ def run_unsupervised(
     silhouettes = []
 
     for k in k_range:
-        km = KMeans(n_clusters=k, random_state=RANDOM_STATE, n_init=10)
+        km = KMeans(n_clusters=k, random_state=RANDOM_STATE, n_init=1, max_iter=100)
         labels = km.fit_predict(X_scaled)
         inertias.append(float(km.inertia_))
         sil = silhouette_score(
@@ -76,7 +82,7 @@ def run_unsupervised(
     logger.info(f"  Mejor K por Silhouette: {best_k}")
 
     # ----- 3. K-Means final -----
-    final_km = KMeans(n_clusters=best_k, random_state=RANDOM_STATE, n_init=10)
+    final_km = KMeans(n_clusters=best_k, random_state=RANDOM_STATE, n_init=1, max_iter=100)
     final_labels = final_km.fit_predict(X_scaled)
 
     # ----- 4. PCA — Reducción a 2D -----
