@@ -74,3 +74,4 @@ evaluation:
 clustering:
   silhouette_sample_size: 10000
   training_sample_size: 50000
+  final_k: 4                     # K definitivo para el modelo exportable

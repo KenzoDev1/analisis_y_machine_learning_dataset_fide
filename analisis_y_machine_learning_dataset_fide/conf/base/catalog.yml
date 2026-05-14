@@ -116,6 +116,13 @@ optimized_model:
   filepath: data/06_models/optimized_model.pkl
 
 # ==========================================
+# 07_MODEL_OUTPUT — Datos etiquetados por modelos
+# ==========================================
+fide_clustered_data:
+  type: pandas.ParquetDataset
+  filepath: data/07_model_output/clustered_data.parquet
+
+# ==========================================
 # 08_REPORTING — Reportes y métricas
 # ==========================================
 validation_report:

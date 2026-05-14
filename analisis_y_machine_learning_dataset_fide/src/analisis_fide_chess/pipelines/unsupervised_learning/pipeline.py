@@ -9,7 +9,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 func=run_unsupervised,
                 inputs=["fide_preprocessed_data", "params:clustering"],
-                outputs=["unsupervised_model", "clustering_metrics"],
+                outputs=["clustering_metrics", "unsupervised_model", "fide_clustered_data"],
                 name="run_unsupervised_node",
             ),
         ]
