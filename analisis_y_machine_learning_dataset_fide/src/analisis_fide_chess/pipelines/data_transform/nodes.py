@@ -15,6 +15,30 @@ from sklearn.preprocessing import MinMaxScaler, LabelEncoder
 logger = logging.getLogger(__name__)
 
 
+def downcast_dtypes(df: pd.DataFrame) -> pd.DataFrame:
+    """Reduce el uso de memoria convirtiendo int64→int32 y float64→float32.
+
+    Columnas de tipo object/string no se modifican.
+    Loguea la reducción de memoria obtenida (Optimización 2 — Colab).
+    """
+    mem_before = df.memory_usage(deep=True).sum() / 1024**2  # MB
+
+    for col in df.columns:
+        col_dtype = df[col].dtype
+        if col_dtype == np.int64:
+            df[col] = df[col].astype(np.int32)
+        elif col_dtype == np.float64:
+            df[col] = df[col].astype(np.float32)
+
+    mem_after = df.memory_usage(deep=True).sum() / 1024**2
+    reduction = (1 - mem_after / mem_before) * 100 if mem_before > 0 else 0
+    logger.info(
+        f"[Downcasting] Memoria: {mem_before:.1f} MB → {mem_after:.1f} MB "
+        f"(reducción: {reduction:.1f}%)"
+    )
+    return df
+
+
 def merge_and_transform(
     players: pd.DataFrame,
     ratings_2019: pd.DataFrame,
@@ -151,6 +175,11 @@ def merge_and_transform(
     # Eliminar filas sin rating promedio (jugadores sin partidas)
     if "rating_std_avg" in df.columns:
         df = df.dropna(subset=["rating_std_avg"])
+
+    # ------------------------------------------------------------------
+    # Downcasting de tipos numéricos (Optimización 2 — Colab)
+    # ------------------------------------------------------------------
+    df = downcast_dtypes(df)
 
     logger.info(f"Dataset transformado final: {df.shape}")
     logger.info(f"Columnas: {df.columns.tolist()}")

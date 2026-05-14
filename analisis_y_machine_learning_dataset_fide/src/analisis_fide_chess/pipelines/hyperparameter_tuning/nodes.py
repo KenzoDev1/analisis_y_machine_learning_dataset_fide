@@ -9,6 +9,10 @@ la mejor configuración del modelo.
 Los modelos llegan envueltos en sklearn.pipeline.Pipeline (scaler + classifier),
 por lo que todos los nombres de hiperparámetros usan el prefijo "classifier__".
 Esto cumple con el requerimiento IEE 2.3.1 de la rúbrica.
+
+Las grillas y el cv se leen desde parameters.yml (sección ``tuning``)
+para poder ajustar la complejidad de la búsqueda según el entorno
+(Optimización 3 — Colab).
 """
 import pandas as pd
 import numpy as np
@@ -30,6 +34,7 @@ def optimize_hyperparameters(
     y_train: pd.Series,
     X_test: pd.DataFrame,
     y_test: pd.Series,
+    tuning_params: dict,
 ) -> tuple:
     """Optimiza hiperparámetros de múltiples modelos.
 
@@ -42,6 +47,9 @@ def optimize_hyperparameters(
     para ser consistentes con el pipeline de entrenamiento (IEE 2.1.1).
     Por ello, los nombres de hiperparámetros llevan el prefijo "classifier__".
 
+    Los valores de ``cv``, ``n_iter`` y las grillas de parámetros se leen
+    desde ``tuning_params`` (inyectado desde ``parameters.yml``).
+
     Returns:
         Tuple[modelo_optimizado, reporte_dict]
     """
@@ -49,9 +57,38 @@ def optimize_hyperparameters(
     logger.info("OPTIMIZACIÓN DE HIPERPARÁMETROS")
     logger.info("=" * 60)
 
+    # ------------------------------------------------------------------
+    # Leer configuración parametrizada (Optimización 3 — Colab)
+    # ------------------------------------------------------------------
+    cv = tuning_params.get("cv", 3)
+    n_iter_random = tuning_params.get("n_iter_random", 8)
+    grids = tuning_params.get("grids", {})
+
+    logger.info(f"  cv={cv}, n_iter_random={n_iter_random}")
+
     # ----- Definir espacios de búsqueda -----
     # Los nombres de params usan el prefijo "classifier__" porque cada
     # modelo está envuelto en un Pipeline con el paso llamado "classifier".
+
+    # Grillas por defecto (fallback si no hay configuración en params)
+    default_grids = {
+        "LogisticRegression": {
+            "classifier__C": [0.1, 1, 10],
+            "classifier__penalty": ["l2"],
+            "classifier__solver": ["lbfgs"],
+        },
+        "RandomForest": {
+            "classifier__n_estimators": [50, 100],
+            "classifier__max_depth": [5, 10],
+            "classifier__min_samples_split": [2, 5],
+        },
+        "GradientBoosting": {
+            "classifier__n_estimators": [50, 100],
+            "classifier__max_depth": [3, 5],
+            "classifier__learning_rate": [0.1, 0.2],
+        },
+    }
+
     search_spaces = {
         "LogisticRegression": {
             "model": Pipeline([
@@ -60,12 +97,8 @@ def optimize_hyperparameters(
                     max_iter=1000, random_state=RANDOM_STATE
                 )),
             ]),
-            "params": {
-                "classifier__C": [0.01, 0.1, 1, 10, 100],
-                "classifier__penalty": ["l1", "l2"],
-                "classifier__solver": ["liblinear", "saga"],
-            },
-            # Espacio pequeño (5×2×2 = 20 combinaciones) → GridSearchCV
+            "params": grids.get("LogisticRegression", default_grids["LogisticRegression"]),
+            # Espacio pequeño → GridSearchCV
             "search": "grid",
         },
         "RandomForest": {
@@ -73,30 +106,20 @@ def optimize_hyperparameters(
                 ("scaler", StandardScaler()),
                 ("classifier", RandomForestClassifier(random_state=RANDOM_STATE)),
             ]),
-            "params": {
-                "classifier__n_estimators": [50, 100, 200],
-                "classifier__max_depth": [5, 10, 20, None],
-                "classifier__min_samples_split": [2, 5, 10],
-                "classifier__min_samples_leaf": [1, 2, 4],
-            },
-            # Espacio grande (3×4×3×3 = 108 combinaciones) → RandomizedSearchCV
+            "params": grids.get("RandomForest", default_grids["RandomForest"]),
+            # Espacio grande → RandomizedSearchCV
             "search": "random",
-            "n_iter": 30,
+            "n_iter": n_iter_random,
         },
         "GradientBoosting": {
             "model": Pipeline([
                 ("scaler", StandardScaler()),
                 ("classifier", GradientBoostingClassifier(random_state=RANDOM_STATE)),
             ]),
-            "params": {
-                "classifier__n_estimators": [50, 100, 200],
-                "classifier__max_depth": [3, 5, 7],
-                "classifier__learning_rate": [0.01, 0.1, 0.2],
-                "classifier__min_samples_split": [2, 5],
-            },
-            # Espacio grande (3×3×3×2 = 54 combinaciones) → RandomizedSearchCV
+            "params": grids.get("GradientBoosting", default_grids["GradientBoosting"]),
+            # Espacio grande → RandomizedSearchCV
             "search": "random",
-            "n_iter": 20,
+            "n_iter": n_iter_random,
         },
     }
 
@@ -118,7 +141,7 @@ def optimize_hyperparameters(
                 estimator=config["model"],
                 param_distributions=config["params"],
                 n_iter=config["n_iter"],
-                cv=5,
+                cv=cv,
                 scoring="f1",
                 n_jobs=-1,
                 verbose=0,
@@ -134,7 +157,7 @@ def optimize_hyperparameters(
             searcher = GridSearchCV(
                 estimator=config["model"],
                 param_grid=config["params"],
-                cv=5,
+                cv=cv,
                 scoring="f1",
                 n_jobs=-1,
                 verbose=0,
@@ -177,4 +200,6 @@ def optimize_hyperparameters(
     logger.info(f"MEJOR MODELO OPTIMIZADO: {best_overall_name} (F1 CV: {best_overall_score:.4f})")
     logger.info(f"{'='*60}")
 
+
     return best_overall_model, report
+

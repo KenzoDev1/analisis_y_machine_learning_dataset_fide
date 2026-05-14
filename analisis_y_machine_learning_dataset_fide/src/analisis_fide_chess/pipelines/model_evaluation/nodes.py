@@ -31,15 +31,24 @@ def evaluate_model(
     X_test: pd.DataFrame,
     y_train: pd.Series,
     y_test: pd.Series,
+    eval_params: dict,
 ) -> dict:
     """Evalúa el modelo principal y compara con otros usando validación cruzada.
 
     Genera un reporte completo con:
     - Métricas en test (Accuracy, Precision, Recall, F1, ROC-AUC)
-    - Validación cruzada (5-fold) para cada modelo
+    - Validación cruzada (cv configurable) para cada modelo
     - Comparación entre modelos
     - Matriz de confusión
+
+    El número de folds se lee desde ``eval_params`` (Optimización 3 — Colab).
     """
+    # ------------------------------------------------------------------
+    # Leer cv parametrizado (Optimización 3 — Colab)
+    # ------------------------------------------------------------------
+    cv = eval_params.get("cv", 3)
+    logger.info(f"Evaluación con cv={cv}")
+
     # ----- 1. Evaluar modelo principal en test -----
     y_pred = model.predict(X_test)
     y_proba = (
@@ -64,7 +73,7 @@ def evaluate_model(
     # ----- 2. Validación cruzada del modelo principal -----
     scoring = ["accuracy", "precision", "recall", "f1", "roc_auc"]
     cv_results = cross_validate(
-        model, X_train, y_train, cv=5, scoring=scoring, return_train_score=False
+        model, X_train, y_train, cv=cv, scoring=scoring, return_train_score=False
     )
     cv_summary = {}
     for metric in scoring:
@@ -88,9 +97,9 @@ def evaluate_model(
 
     comparison = {}
     for name, m in all_models.items():
-        logger.info(f"Evaluando {name} con cross-validation...")
-        cv_acc = cross_val_score(m, X_train, y_train, cv=5, scoring="accuracy")
-        cv_f1 = cross_val_score(m, X_train, y_train, cv=5, scoring="f1")
+        logger.info(f"Evaluando {name} con cross-validation (cv={cv})...")
+        cv_acc = cross_val_score(m, X_train, y_train, cv=cv, scoring="accuracy")
+        cv_f1 = cross_val_score(m, X_train, y_train, cv=cv, scoring="f1")
         comparison[name] = {
             "cv_accuracy_mean": round(float(np.mean(cv_acc)), 4),
             "cv_accuracy_std": round(float(np.std(cv_acc)), 4),

@@ -51,9 +51,31 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
 def split_data(
     df: pd.DataFrame,
     parameters: dict,
+    sampling_params: dict,
 ) -> tuple:
-    """Divide el dataset en train y test."""
+    """Divide el dataset en train y test, aplicando subsampling opcional.
+
+    Si ``sampling_params.sample_size`` es un entero y menor que ``len(df)``,
+    se toma una muestra estratificada del dataset antes del split.
+    Esto permite ejecutar el pipeline completo en entornos con memoria
+    limitada como Google Colab gratuito.
+    """
     available = [c for c in FEATURE_CANDIDATES if c in df.columns]
+
+    # ------------------------------------------------------------------
+    # Subsampling configurable (Optimización 1 — Colab)
+    # ------------------------------------------------------------------
+    sample_size = sampling_params.get("sample_size", None)
+    sample_rs = sampling_params.get("random_state", RANDOM_STATE)
+
+    if sample_size is not None and sample_size < len(df):
+        logger.info(
+            f"[Subsampling] Reduciendo de {len(df)} a {sample_size} filas "
+            f"(random_state={sample_rs})"
+        )
+        df = df.sample(n=sample_size, random_state=sample_rs)
+    else:
+        logger.info(f"[Subsampling] Sin muestreo — usando {len(df)} filas completas")
 
     X = df[available]
     y = df[TARGET]

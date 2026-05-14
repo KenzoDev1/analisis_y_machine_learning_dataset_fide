@@ -14,6 +14,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "X_test",
                     "y_train",
                     "y_test",
+                    "params:evaluation",
                 ],
                 outputs="evaluation_report",
                 name="evaluate_model_node",
