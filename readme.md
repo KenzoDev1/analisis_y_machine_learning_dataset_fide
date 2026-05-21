@@ -103,6 +103,26 @@ Ejecuta `kedro jupyter lab` para explorar los siguientes análisis interactivos:
 
 ---
 
+## 📑 Evaluación SCY1101: Informe Técnico Completo
+
+> [!IMPORTANT]
+> **Aclaración para el Evaluador**
+> 
+> El **informe técnico completo** exigido por la rúbrica (incluyendo el marco metodológico, análisis experimental, optimización de hiperparámetros, resultados de clustering y la bibliografía/referencias) **no es un documento de texto estático separado** en este repositorio.
+> 
+> Este informe se genera **automáticamente en formato HTML** (`informe_modelos.html`) como resultado final de la ejecución de nuestro pipeline. Esto asegura que el reporte y sus justificaciones estén siempre sincronizados con el código y los modelos más recientes.
+
+Para generar y visualizar este reporte, debe ejecutar el siguiente comando exacto:
+
+```bash
+kedro run --pipeline model_report
+```
+
+Una vez ejecutado, el documento resultante se encontrará en:
+`data/08_reporting/informe_modelos.html`
+
+---
+
 ## 📂 Estructura del proyecto
 
 ```text
