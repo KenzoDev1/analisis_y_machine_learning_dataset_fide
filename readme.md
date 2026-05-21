@@ -1,6 +1,7 @@
 # Análisis y Machine Learning — FIDE Chess Dataset (Kedro)
 
 [![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://docs.kedro.org)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kenzodev1/analisis_y_machine_learning_dataset_fide/blob/main/analisis_y_machine_learning_dataset_fide.ipynb)
 
 Este repositorio contiene un proyecto **Kedro** para analizar el dataset de ajedrez **FIDE**. El pipeline abarca:
 - Ingesta de datos

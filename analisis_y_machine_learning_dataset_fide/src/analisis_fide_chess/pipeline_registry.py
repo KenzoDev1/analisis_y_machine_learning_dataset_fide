@@ -17,6 +17,8 @@ _DEFAULT_PIPELINE_ORDER = (
     "model_evaluation",
     "hyperparameter_tuning",
     "unsupervised_learning",
+    # Informe HTML técnico (se genera al final)
+    "model_report",
 )
 
 def register_pipelines() -> dict[str, Pipeline]:
